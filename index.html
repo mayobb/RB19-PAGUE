@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-i18n="page.title">RB19 — Cinematic Experience</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Preload recursos críticos -->
+    <link rel="preload" href="assets/css/style.css" as="style">
+    <link rel="preload" href="assets/js/script.js" as="script">
+    <link rel="preload" href="assets/videos/video-bg.mp4" as="video" type="video/mp4">
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+
+<body>
+
+    <a href="#main-content" class="skip-link">Skip to content</a>
+
+    <div id="loading-overlay">
+        <div id="loading-lottie"></div>
+    </div>
+
+    <nav id="navbar">
+        <a href="https://github.com/mayobb" class="logo-link" target="_blank" rel="noopener noreferrer">
+            <img src="https://newshields.vercel.app/api/badge.svg?label=by&title=mayobb&icon=github_dark&theme=graphite"
+                alt="by Mayop" class="logo-badge">
+        </a>
+        <div class="nav-links">
+            <a href="#hero" class="nav-link active" data-i18n="nav.home">Inicio</a>
+            <a href="#stats" class="nav-link" data-i18n="nav.stats">Datos</a>
+            <a href="#modelo" class="nav-link" data-i18n="nav.model">Modelo 3D</a>
+            <a href="#trophies" class="nav-link" data-i18n="nav.trophies">Trofeos</a>
+            <a href="#drivers" class="nav-link" data-i18n="nav.drivers">Pilotos</a>
+            <a href="#timeline" class="nav-link" data-i18n="nav.timeline">Temporada</a>
+            <a href="#compare" class="nav-link" data-i18n="nav.compare">Comparativa</a>
+        </div>
+    </nav>
+
+    <div class="floating-toolbar">
+        <button class="toolbar-btn" id="langToggle" aria-label="Cambiar idioma">EN</button>
+        <button class="toolbar-btn" id="soundToggle" aria-label="Encender sonido">
+            <svg class="sound-on" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="2">
+                <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
+                <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07" />
+            </svg>
+            <svg class="sound-off" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="2">
+                <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
+                <line x1="23" y1="9" x2="17" y2="15" />
+                <line x1="17" y1="9" x2="23" y2="15" />
+            </svg>
+        </button>
+        <div class="toolbar-countdown" id="countdownWidget">
+            <span class="cd-label" data-i18n="countdown">Próxima carrera</span>
+            <span class="cd-time" id="countdownTimer">--d --h --m</span>
+        </div>
+        <button class="toolbar-btn" id="raceWeekendToggle" aria-label="Race weekend mode" data-i18n-aria="weekend">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                <line x1="16" y1="2" x2="16" y2="6" />
+                <line x1="8" y1="2" x2="8" y2="6" />
+                <line x1="3" y1="10" x2="21" y2="10" />
+            </svg>
+        </button>
+    </div>
+
+    <video class="bg-video" autoplay muted loop playsinline preload="none" fetchpriority="low">
+        <source src="assets/videos/video-bg.mp4" type="video/mp4">
+    </video>
+
+    <canvas id="rainCanvas" aria-hidden="true"></canvas>
+
+    <div class="fluid-bg" aria-hidden="true" data-parallax="0.08">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+    </div>
+    <div class="butterflies" aria-hidden="true">
+        <div class="butterfly bf-1">
+            <svg viewBox="0 0 100 80" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="1.5">
+                <path
+                    d="M50 45 Q30 20 10 25 Q5 35 20 50 Q10 60 5 70 Q20 65 35 58 Q45 65 50 70 Q55 65 65 58 Q80 65 95 70 Q90 60 80 50 Q95 35 90 25 Q70 20 50 45Z"
+                    fill="rgba(255,255,255,0.06)" />
+            </svg>
+        </div>
+        <div class="butterfly bf-2">
+            <svg viewBox="0 0 100 80" fill="none" stroke="rgba(200,200,200,0.15)" stroke-width="1.5">
+                <path
+                    d="M50 45 Q30 20 10 25 Q5 35 20 50 Q10 60 5 70 Q20 65 35 58 Q45 65 50 70 Q55 65 65 58 Q80 65 95 70 Q90 60 80 50 Q95 35 90 25 Q70 20 50 45Z"
+                    fill="rgba(200,200,200,0.04)" />
+            </svg>
+        </div>
+        <div class="butterfly bf-3">
+            <svg viewBox="0 0 100 80" fill="none" stroke="rgba(255,255,255,0.12)" stroke-width="1.5">
+                <path
+                    d="M50 45 Q30 20 10 25 Q5 35 20 50 Q10 60 5 70 Q20 65 35 58 Q45 65 50 70 Q55 65 65 58 Q80 65 95 70 Q90 60 80 50 Q95 35 90 25 Q70 20 50 45Z"
+                    fill="rgba(255,255,255,0.03)" />
+            </svg>
+        </div>
+    </div>
+
+    <main id="main-content">
+
+        <section id="hero" class="section">
+            <div class="hero-content">
+                <div class="hero-badge glass">RB19</div>
+                <h1 class="hero-title">Red Bull <span class="text-gradient">RB19</span></h1>
+                <p class="hero-subtitle" data-i18n="hero.subtitle">El monoplaza más dominante en la historia de la
+                    Fórmula 1</p>
+                <div class="hero-stats glass">
+                    <div class="hero-stat">
+                        <span class="hero-stat-num">21/22</span>
+                        <span class="hero-stat-label" data-i18n="hero.wins">Victorias</span>
+                    </div>
+                    <div class="hero-stat">
+                        <span class="hero-stat-num">860pts</span>
+                        <span class="hero-stat-label" data-i18n="hero.points">Campeonato</span>
+                    </div>
+                    <div class="hero-stat">
+                        <span class="hero-stat-num">1:04.3</span>
+                        <span class="hero-stat-label" data-i18n="hero.lap">Vuelta récord</span>
+                    </div>
+                </div>
+            </div>
+            <div class="scroll-indicator">
+                <span data-i18n="scroll">Desplázate</span>
+                <div class="scroll-arrow"></div>
+            </div>
+        </section>
+
+        <section id="stats" class="section">
+            <h2 class="section-title"><span data-i18n="stats.title">Métricas de</span> <span class="text-gradient"
+                    data-i18n="stats.titleaccent">Dominio</span></h2>
+            <div class="cards-grid">
+                <div class="metric-card glass" data-delay="0">
+                    <div class="card-icon"><svg width="32" height="32" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="1.5">
+                            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
+                        </svg></div>
+                    <span class="card-value" data-target="21">0</span>
+                    <span class="card-label" data-i18n="stats.wins">Victorias</span>
+                    <span class="card-sub" data-i18n="stats.winssub">de 22 Grandes Premios</span>
+                </div>
+                <div class="metric-card glass" data-delay="150">
+                    <div class="card-icon"><svg width="32" height="32" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="1.5">
+                            <path d="M12 20V10" />
+                            <path d="M18 20V4" />
+                            <path d="M6 20v-4" />
+                        </svg></div>
+                    <span class="card-value" data-target="860">0</span>
+                    <span class="card-label" data-i18n="stats.points">Puntos</span>
+                    <span class="card-sub" data-i18n="stats.pointssub">en la temporada 2023</span>
+                </div>
+                <div class="metric-card glass" data-delay="300">
+                    <div class="card-icon"><svg width="32" height="32" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="1.5">
+                            <circle cx="12" cy="12" r="10" />
+                            <polyline points="12 6 12 12 16 14" />
+                        </svg></div>
+                    <span class="card-value" data-target="15">0</span>
+                    <span class="card-label" data-i18n="stats.poles">Poles</span>
+                    <span class="card-sub" data-i18n="stats.polessub">Posiciones de privilegio</span>
+                </div>
+                <div class="metric-card glass" data-delay="450">
+                    <div class="card-icon"><svg width="32" height="32" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="1.5">
+                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                            <polyline points="22 4 12 14.01 9 11.01" />
+                        </svg></div>
+                    <span class="card-value">1:04.391</span>
+                    <span class="card-label" data-i18n="stats.lap">Vuelta rápida</span>
+                    <span class="card-sub" data-i18n="stats.lapsub">Circuito de Yas Marina</span>
+                </div>
+            </div>
+        </section>
+
+        <section id="modelo" class="section">
+            <div class="model-section-content">
+                <div class="model-viewer-wrapper">
+                    <model-viewer src="assets/models/rb19/oracle_redbull_rb19.glb" alt="Red Bull RB19 Oracle"
+                        auto-rotate camera-controls
+                        camera-orbit="45deg 30deg 3.5m"
+                        rotation-per-second="6deg"
+                        shadow-intensity="0.3" shadow-softness="0.6"
+                        exposure="0.65" tone-mapping="aces"
+                        min-camera-orbit="auto 20deg 2m"
+                        max-camera-orbit="auto 80deg 8m"
+                        environment-image="neutral"
+                        loading="eager" reveal="auto"
+                        class="rb19-model"></model-viewer>
+                </div>
+                <div class="model-text">
+                    <h2 class="section-title left">Red Bull <span class="text-gradient">RB19</span></h2>
+                    <p class="model-description" data-i18n="model.desc">Explorá el monoplaza más dominante de la
+                        historia en 3D. Diseñado por Adrian Newey, el RB19 ganó 21 de 22 carreras en la temporada 2023.
+                    </p>
+                    <div class="model-features">
+                        <div class="mf-item glass"><span class="mf-dot"></span> <span data-i18n="model.rotate">Arrastrá
+                                para rotar</span></div>
+                        <div class="mf-item glass"><span class="mf-dot"></span> <span data-i18n="model.zoom">Hacé scroll
+                                para zoom</span></div>
+                        <div class="mf-item glass"><span class="mf-dot"></span> <span data-i18n="model.move">Click
+                                derecho para mover</span></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="trophies" class="section">
+            <h2 class="section-title"><span data-i18n="trophies.title">Trofeos</span> <span
+                    class="text-gradient">2023</span></h2>
+            <div class="trophy-grid">
+                <div class="trophy-card glass">
+                    <div class="trophy-icon"><svg width="48" height="48" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="1.5">
+                            <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5C7 4 8 7 8 7" />
+                            <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5C17 4 16 7 16 7" />
+                            <path d="M4 22h16" />
+                            <path d="M10 22v-6a2 2 0 0 1 2-2h0a2 2 0 0 1 2 2v6" />
+                            <path d="M12 2v4" />
+                            <path d="M8 12h8" />
+                        </svg></div>
+                    <span class="trophy-count">21</span>
+                    <span class="trophy-label" data-i18n="trophies.wins">Victorias</span>
+                    <span class="trophy-sub" data-i18n="trophies.winssub">de 22 Grandes Premios</span>
+                    <div class="trophy-wins-grid">
+                        <span>BHR</span><span>SAU</span><span>AUS</span><span>AZE</span><span>MIA</span>
+                        <span>MON</span><span>ESP</span><span>CAN</span><span>AUT</span><span>GBR</span>
+                        <span>HUN</span><span>BEL</span><span>NED</span><span>ITA</span><span>SIN</span>
+                        <span>JPN</span><span>QAT</span><span>USA</span><span>MEX</span><span>BRA</span>
+                        <span>ABU</span>
+                    </div>
+                </div>
+                <div class="trophy-card glass">
+                    <div class="trophy-icon"><svg width="48" height="48" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="1.5">
+                            <circle cx="12" cy="8" r="5" />
+                            <path d="M3 21v-2a7 7 0 0 1 7-7h4a7 7 0 0 1 7 7v2" />
+                        </svg></div>
+                    <span class="trophy-count">1</span>
+                    <span class="trophy-label" data-i18n="trophies.driver">Campeonato de Pilotos</span>
+                    <span class="trophy-sub" data-i18n="trophies.driversub">Max Verstappen — 575 pts</span>
+                </div>
+                <div class="trophy-card glass">
+                    <div class="trophy-icon"><svg width="48" height="48" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="1.5">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                            <circle cx="9" cy="7" r="4" />
+                            <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                        </svg></div>
+                    <span class="trophy-count">1</span>
+                    <span class="trophy-label" data-i18n="trophies.constructor">Campeonato de Constructores</span>
+                    <span class="trophy-sub" data-i18n="trophies.constructorsub">Red Bull Racing — 860 pts</span>
+                </div>
+            </div>
+        </section>
+
+        <section id="drivers" class="section">
+            <h2 class="section-title"><span data-i18n="drivers.title">Nuestros</span> <span class="text-gradient"
+                    data-i18n="drivers.titleaccent">Pilotos</span></h2>
+            <div class="drivers-grid">
+                <div class="driver-card glass">
+                    <div class="driver-number">1</div>
+                    <div class="driver-avatar">
+                        <img src="assets/images/drivers/max.webp" alt="Max Verstappen" class="driver-img" loading="lazy"
+                            decoding="async">
+                    </div>
+                    <span class="driver-name">Max Verstappen</span>
+                    <span class="driver-flag">🇳🇱 Países Bajos</span>
+                    <div class="driver-stats-row">
+                        <div class="ds-item"><span class="ds-value">19</span><span class="ds-label"
+                                data-i18n="drivers.wins">Victorias</span></div>
+                        <div class="ds-item"><span class="ds-value">575</span><span class="ds-label"
+                                data-i18n="drivers.pts">Puntos</span></div>
+                        <div class="ds-item"><span class="ds-value">10</span><span class="ds-label"
+                                data-i18n="drivers.poles">Poles</span></div>
+                    </div>
+                </div>
+                <div class="driver-card glass">
+                    <div class="driver-number">11</div>
+                    <div class="driver-avatar">
+                        <img src="assets/images/drivers/perez.jpg" alt="Sergio Pérez" class="driver-img" loading="lazy"
+                            decoding="async">
+                    </div>
+                    <span class="driver-name">Sergio Pérez</span>
+                    <span class="driver-flag">🇲🇽 México</span>
+                    <div class="driver-stats-row">
+                        <div class="ds-item"><span class="ds-value">2</span><span class="ds-label"
+                                data-i18n="drivers.wins">Victorias</span></div>
+                        <div class="ds-item"><span class="ds-value">285</span><span class="ds-label"
+                                data-i18n="drivers.pts">Puntos</span></div>
+                        <div class="ds-item"><span class="ds-value">2</span><span class="ds-label"
+                                data-i18n="drivers.poles">Poles</span></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="timeline" class="section">
+            <h2 class="section-title"><span data-i18n="timeline.title">Temporada</span> <span class="text-gradient"
+                    data-i18n="timeline.titleaccent">2023</span></h2>
+            <p class="timeline-hint" data-i18n="timeline.hint">Hacé clic en cualquier GP</p>
+            <button class="timeline-auto-btn glass" id="timelineAutoPlay"
+                data-i18n="timeline.autoplay">Reproducir</button>
+            <div class="track-timeline">
+                <div class="track-road"></div>
+                <div class="track-center"></div>
+
+                <div class="race-node won" data-race="0">
+                    <div class="node-label">
+                        <div class="node-meta"><span class="node-pos">1º</span><span class="node-abbr">BHR</span></div>
+                        <span class="node-name">Bahrein</span>
+                    </div>
+                    <div class="node-dot"></div>
+                    <div class="node-flag">🏁</div>
+                </div>
+                <div class="race-node won" data-race="1">
+                    <div class="node-label">
+                        <div class="node-meta"><span class="node-pos">1º</span><span class="node-abbr">SAU</span></div>
+                        <span class="node-name">Arabia Saudita</span>
+                    </div>
+                    <div class="node-dot"></div>
+                    <div class="node-flag">🏁</div>
+                </div>
+                <div class="race-node won" data-race="2">
+                    <div class="node-label">
+                        <div class="node-meta"><span class="node-pos">1º</span><span class="node-abbr">AUS</span></div>
+                        <span class="node-name">Australia</span>
+                    </div>
+                    <div class="node-dot"></div>
+                    <div class="node-flag">🏁</div>
+                </div>
+                <div class="race-node won" data-race="3">
+                    <div class="node-label">
+                        <div class="node-meta"><span class="node-pos">1º</span><span class="node-abbr">AZE</span></div>
+                        <span class="node-name">Azerbaiyán</span>
+                    </div>
+                    <div class="node-dot"></div>
+                    <div class="node-flag">🏁</div>
+                </div>
+                <div class="race-node won" data-race="4">
+                    <div class="node-label">
+                        <div class="node-meta"><span class="node-pos">1º</span><span class="node-abbr">MIA</span></div>
+                        <span class="node-name">Miami</span>
+                    </div>
+                    <div class="node-dot"></div>
+                    <div class="node-flag">🏁</div>
+                </div>
+                <div class="race-node won" data-race="5">
+                    <div class="node-label">
+                        <div class="node-meta"><span class="node-pos">1º</span><span class="node-abbr">MON</span></div>
+                        <span class="node-name">Mónaco</span>
+                    </div>
+                    <div class="node-dot"></div>
+                    <div class="node-flag">🏁</div>
+                </div>
+                <div class="race-node won" data-race="6">
+                    <div class="node-label">
+                        <div class="node-meta"><span class="node-pos">1º</span><span class="node-abbr">ESP</span></div>
+                        <span class="node-name">España</span>
+                    </div>
+                    <div class="node-dot"></div>
+                    <div class="node-flag">🏁</div>
+                </div>
+                <div class="race-node won" data-race="7">
+                    <div class="node-label">
+                        <div class="node-meta"><span class="node-pos">1º</span><span class="node-abbr">CAN</span></div>
+                        <span class="node-name">Canadá</span>
+                    </div>
+                    <div class="node-dot"></div>
+                    <div class="node-flag">🏁</div>
+                </div>
+                <div class="race-node won" data-race="8">
+                    <div class="node-label">
+                        <div class="node-meta"><span class="node-pos">1º</span><span class="node-abbr">AUT</span></div>
+                        <span class="node-name">Austria</span>
+                    </div>
+                    <div class="node-dot"></div>
+                    <div class="node-flag">🏁</div>
+                </div>
+                <div class="race-node won" data-race="9">
+                    <div class="node-label">
+                        <div class="node-meta"><span class="node-pos">1º</span><span class="node-abbr">GBR</span></div>
+                        <span class="node-name">Gran Bretaña</span>
+                    </div>
+                    <div class="node-dot"></div>
+                    <div class="node-flag">🏁</div>
+                </div>
+                <div class="race-node won" data-race="10">
+                    <div class="node-label">
+                        <div class="node-meta"><span class="node-pos">1º</span><span class="node-abbr">HUN</span></div>
+                        <span class="node-name">Hungría</span>
+                    </div>
+                    <div class="node-dot"></div>
+                    <div class="node-flag">🏁</div>
+                </div>
+                <div class="race-node won" data-race="11">
+                    <div class="node-label">
+                        <div class="node-meta"><span class="node-pos">1º</span><span class="node-abbr">BEL</span></div>
+                        <span class="node-name">Bélgica</span>
+                    </div>
+                    <div class="node-dot"></div>
+                    <div class="node-flag">🏁</div>
+                </div>
+                <div class="race-node won" data-race="12">
+                    <div class="node-label">
+                        <div class="node-meta"><span class="node-pos">1º</span><span class="node-abbr">NED</span></div>
+                        <span class="node-name">Países Bajos</span>
+                    </div>
+                    <div class="node-dot"></div>
+                    <div class="node-flag">🏁</div>
+                </div>
+                <div class="race-node won" data-race="13">
+                    <div class="node-label">
+                        <div class="node-meta"><span class="node-pos">1º</span><span class="node-abbr">ITA</span></div>
+                        <span class="node-name">Italia</span>
+                    </div>
+                    <div class="node-dot"></div>
+                    <div class="node-flag">🏁</div>
+                </div>
+                <div class="race-node lost" data-race="14">
+                    <div class="node-label">
+                        <div class="node-meta"><span class="node-pos">5º</span><span class="node-abbr">SIN</span></div>
+                        <span class="node-name">Singapur</span>
+                    </div>
+                    <div class="node-dot"></div>
+                    <div class="node-flag">⚑</div>
+                </div>
+                <div class="race-node won" data-race="15">
+                    <div class="node-label">
+                        <div class="node-meta"><span class="node-pos">1º</span><span class="node-abbr">JPN</span></div>
+                        <span class="node-name">Japón</span>
+                    </div>
+                    <div class="node-dot"></div>
+                    <div class="node-flag">🏁</div>
+                </div>
+                <div class="race-node won" data-race="16">
+                    <div class="node-label">
+                        <div class="node-meta"><span class="node-pos">1º</span><span class="node-abbr">QAT</span></div>
+                        <span class="node-name">Qatar</span>
+                    </div>
+                    <div class="node-dot"></div>
+                    <div class="node-flag">🏁</div>
+                </div>
+                <div class="race-node won" data-race="17">
+                    <div class="node-label">
+                        <div class="node-meta"><span class="node-pos">1º</span><span class="node-abbr">USA</span></div>
+                        <span class="node-name">EE. UU.</span>
+                    </div>
+                    <div class="node-dot"></div>
+                    <div class="node-flag">🏁</div>
+                </div>
+                <div class="race-node won" data-race="18">
+                    <div class="node-label">
+                        <div class="node-meta"><span class="node-pos">1º</span><span class="node-abbr">MEX</span></div>
+                        <span class="node-name">México</span>
+                    </div>
+                    <div class="node-dot"></div>
+                    <div class="node-flag">🏁</div>
+                </div>
+                <div class="race-node won" data-race="19">
+                    <div class="node-label">
+                        <div class="node-meta"><span class="node-pos">1º</span><span class="node-abbr">BRA</span></div>
+                        <span class="node-name">Brasil</span>
+                    </div>
+                    <div class="node-dot"></div>
+                    <div class="node-flag">🏁</div>
+                </div>
+                <div class="race-node won" data-race="20">
+                    <div class="node-label">
+                        <div class="node-meta"><span class="node-pos">1º</span><span class="node-abbr">LVS</span></div>
+                        <span class="node-name">Las Vegas</span>
+                    </div>
+                    <div class="node-dot"></div>
+                    <div class="node-flag">🏁</div>
+                </div>
+                <div class="race-node won" data-race="21">
+                    <div class="node-label">
+                        <div class="node-meta"><span class="node-pos">1º</span><span class="node-abbr">ABU</span></div>
+                        <span class="node-name">Abu Dhabi</span>
+                    </div>
+                    <div class="node-dot"></div>
+                    <div class="node-flag">🏁</div>
+                </div>
+            </div>
+        </section>
+
+        <div class="modal-overlay" id="raceModal" role="dialog" aria-modal="true">
+            <div class="modal-content glass">
+                <button class="modal-close" id="modalClose" aria-label="Cerrar">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18" />
+                        <line x1="6" y1="6" x2="18" y2="18" />
+                    </svg>
+                </button>
+                <div class="modal-body" id="modalBody"></div>
+            </div>
+        </div>
+
+        <section id="gallery" class="section">
+            <h2 class="section-title"><span data-i18n="gallery.title">Galería</span> <span class="text-gradient"
+                    data-i18n="gallery.titleaccent">RB19</span></h2>
+            <div class="gallery-grid">
+                <div class="gallery-card glass">
+                    <img src="assets/images/gallery/frente2.jpg" alt="Vista frontal" class="gallery-img" loading="lazy"
+                        decoding="async">
+                    <span class="gallery-label" data-i18n="gallery.front">Vista frontal</span>
+                </div>
+                <div class="gallery-card glass">
+                    <img src="assets/images/gallery/lateral2.webp" alt="Vista lateral" class="gallery-img" loading="lazy"
+                        decoding="async">
+                    <span class="gallery-label" data-i18n="gallery.side">Vista lateral</span>
+                </div>
+                <div class="gallery-card glass">
+                    <img src="assets/images/gallery/trasera.webp" alt="Vista trasera" class="gallery-img" loading="lazy"
+                        decoding="async">
+                    <span class="gallery-label" data-i18n="gallery.rear">Vista trasera</span>
+                </div>
+                <div class="gallery-card glass">
+                    <img src="assets/images/gallery/c.webp" alt="Detalle" class="gallery-img" loading="lazy" decoding="async">
+                    <span class="gallery-label" data-i18n="gallery.detail">Detalle</span>
+                </div>
+            </div>
+        </section>
+
+        <div class="modal-overlay" id="videoModal" role="dialog" aria-modal="true">
+            <div class="video-modal-content glass">
+                <button class="modal-close" id="videoModalClose" aria-label="Cerrar video">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18" />
+                        <line x1="6" y1="6" x2="18" y2="18" />
+                    </svg>
+                </button>
+                <div class="video-modal-inner">
+                    <video id="onboardVideo" controls playsinline preload="metadata">
+                        <source src="assets/videos/onboard.mp4" type="video/mp4">
+                    </video>
+                </div>
+            </div>
+        </div>
+
+        <div class="lightbox-overlay" id="galleryLightbox" role="dialog" aria-modal="true">
+            <button class="lightbox-close" id="lightboxClose" aria-label="Cerrar galería">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="6" x2="6" y2="18" />
+                    <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
+            </button>
+            <button class="lightbox-nav lightbox-prev" id="lightboxPrev" aria-label="Anterior">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="15 18 9 12 15 6" />
+                </svg>
+            </button>
+            <button class="lightbox-nav lightbox-next" id="lightboxNext" aria-label="Siguiente">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="9 6 15 12 9 18" />
+                </svg>
+            </button>
+            <img class="lightbox-img" id="lightboxImg" alt="">
+            <span class="lightbox-counter" id="lightboxCounter"></span>
+        </div>
+
+        <section id="compare" class="section">
+            <h2 class="section-title"><span data-i18n="compare.title">Comparativa</span> <span class="text-gradient"
+                    data-i18n="compare.titleaccent">Histórica</span></h2>
+            <div class="compare-chart glass">
+                <div class="compare-row header">
+                    <span class="cmp-car"></span>
+                    <span class="cmp-stat" data-i18n="compare.wins">Victorias</span>
+                    <span class="cmp-stat" data-i18n="compare.pct">% Éxito</span>
+                    <span class="cmp-stat" data-i18n="compare.points">Puntos</span>
+                </div>
+                <div class="compare-row rb19-row">
+                    <span class="cmp-car">RB19 <span class="cmp-year">'23</span></span>
+                    <span class="cmp-stat"><span class="cmp-bar" style="width:95%"></span>21/22</span>
+                    <span class="cmp-stat"><span class="cmp-bar" style="width:95%"></span>95.5%</span>
+                    <span class="cmp-stat"><span class="cmp-bar" style="width:95%"></span>860</span>
+                </div>
+                <div class="compare-row">
+                    <span class="cmp-car">MP4/4 <span class="cmp-year">'88</span></span>
+                    <span class="cmp-stat"><span class="cmp-bar" style="width:68%"></span>15/16</span>
+                    <span class="cmp-stat"><span class="cmp-bar" style="width:68%"></span>93.8%</span>
+                    <span class="cmp-stat"><span class="cmp-bar" style="width:55%"></span>199</span>
+                </div>
+                <div class="compare-row">
+                    <span class="cmp-car">F2004 <span class="cmp-year">'04</span></span>
+                    <span class="cmp-stat"><span class="cmp-bar" style="width:60%"></span>15/18</span>
+                    <span class="cmp-stat"><span class="cmp-bar" style="width:60%"></span>83.3%</span>
+                    <span class="cmp-stat"><span class="cmp-bar" style="width:30%"></span>262</span>
+                </div>
+                <div class="compare-row">
+                    <span class="cmp-car">W07 <span class="cmp-year">'16</span></span>
+                    <span class="cmp-stat"><span class="cmp-bar" style="width:52%"></span>19/21</span>
+                    <span class="cmp-stat"><span class="cmp-bar" style="width:52%"></span>90.5%</span>
+                    <span class="cmp-stat"><span class="cmp-bar" style="width:80%"></span>765</span>
+                </div>
+                <div class="compare-row">
+                    <span class="cmp-car">W11 <span class="cmp-year">'20</span></span>
+                    <span class="cmp-stat"><span class="cmp-bar" style="width:55%"></span>13/17</span>
+                    <span class="cmp-stat"><span class="cmp-bar" style="width:55%"></span>76.5%</span>
+                    <span class="cmp-stat"><span class="cmp-bar" style="width:75%"></span>573</span>
+                </div>
+            </div>
+            <button class="rival-toggle glass" id="rivalToggle" data-i18n="compare.rivals">Ver rivales directos</button>
+            <div class="rival-data glass" id="rivalData">
+                <div class="rival-row header">
+                    <span class="riv-team"></span>
+                    <span class="riv-stat" data-i18n="compare.wins">Victorias</span>
+                    <span class="riv-stat" data-i18n="compare.points">Puntos</span>
+                    <span class="riv-stat" data-i18n="compare.gap">Diferencia</span>
+                </div>
+                <div class="rival-row rb19-row">
+                    <span class="riv-team">Red Bull <span class="riv-year">'23</span></span>
+                    <span class="riv-stat">21</span>
+                    <span class="riv-stat">860</span>
+                    <span class="riv-stat">—</span>
+                </div>
+                <div class="rival-row">
+                    <span class="riv-team">Mercedes <span class="riv-year">'23</span></span>
+                    <span class="riv-stat">0</span>
+                    <span class="riv-stat">409</span>
+                    <span class="riv-stat">-451</span>
+                </div>
+                <div class="rival-row">
+                    <span class="riv-team">Ferrari <span class="riv-year">'23</span></span>
+                    <span class="riv-stat">1</span>
+                    <span class="riv-stat">406</span>
+                    <span class="riv-stat">-454</span>
+                </div>
+                <div class="rival-row">
+                    <span class="riv-team">McLaren <span class="riv-year">'23</span></span>
+                    <span class="riv-stat">0</span>
+                    <span class="riv-stat">302</span>
+                    <span class="riv-stat">-558</span>
+                </div>
+                <div class="rival-row">
+                    <span class="riv-team">Aston Martin <span class="riv-year">'23</span></span>
+                    <span class="riv-stat">0</span>
+                    <span class="riv-stat">280</span>
+                    <span class="riv-stat">-580</span>
+                </div>
+            </div>
+        </section>
+
+        <section id="standings" class="section">
+            <h2 class="section-title"><span data-i18n="standings.title">Clasificación</span> <span class="text-gradient"
+                    data-i18n="standings.titleaccent">2023</span></h2>
+            <div class="standings-grid">
+                <div class="standings-table glass">
+                    <h3 class="standings-subtitle" data-i18n="standings.constructors">Constructores</h3>
+                    <div class="st-row header">
+                        <span class="st-pos">#</span>
+                        <span class="st-team" data-i18n="standings.team">Equipo</span>
+                        <span class="st-pts" data-i18n="standings.pts">Pts</span>
+                        <span class="st-wins" data-i18n="standings.wins">Vic</span>
+                    </div>
+                    <div class="st-row"><span class="st-pos">1</span><span class="st-team">Red Bull</span><span
+                            class="st-pts">860</span><span class="st-wins">21</span></div>
+                    <div class="st-row"><span class="st-pos">2</span><span class="st-team">Mercedes</span><span
+                            class="st-pts">409</span><span class="st-wins">0</span></div>
+                    <div class="st-row"><span class="st-pos">3</span><span class="st-team">Ferrari</span><span
+                            class="st-pts">406</span><span class="st-wins">1</span></div>
+                    <div class="st-row"><span class="st-pos">4</span><span class="st-team">McLaren</span><span
+                            class="st-pts">302</span><span class="st-wins">0</span></div>
+                    <div class="st-row"><span class="st-pos">5</span><span class="st-team">Aston Martin</span><span
+                            class="st-pts">280</span><span class="st-wins">0</span></div>
+                    <div class="st-row"><span class="st-pos">6</span><span class="st-team">Alpine</span><span
+                            class="st-pts">120</span><span class="st-wins">0</span></div>
+                    <div class="st-row"><span class="st-pos">7</span><span class="st-team">Williams</span><span
+                            class="st-pts">28</span><span class="st-wins">0</span></div>
+                    <div class="st-row"><span class="st-pos">8</span><span class="st-team">AlphaTauri</span><span
+                            class="st-pts">25</span><span class="st-wins">0</span></div>
+                    <div class="st-row"><span class="st-pos">9</span><span class="st-team">Alfa Romeo</span><span
+                            class="st-pts">16</span><span class="st-wins">0</span></div>
+                    <div class="st-row"><span class="st-pos">10</span><span class="st-team">Haas</span><span
+                            class="st-pts">12</span><span class="st-wins">0</span></div>
+                </div>
+                <div class="standings-chart glass">
+                    <h3 class="standings-subtitle" data-i18n="standings.pointsgraph">Puntos por equipo</h3>
+                    <div class="bar-chart">
+                        <div class="bar-row"><span class="bar-label">Red Bull</span>
+                            <div class="bar-track">
+                                <div class="bar-fill" style="width:100%"></div>
+                            </div><span class="bar-value">860</span>
+                        </div>
+                        <div class="bar-row"><span class="bar-label">Mercedes</span>
+                            <div class="bar-track">
+                                <div class="bar-fill" style="width:47.6%"></div>
+                            </div><span class="bar-value">409</span>
+                        </div>
+                        <div class="bar-row"><span class="bar-label">Ferrari</span>
+                            <div class="bar-track">
+                                <div class="bar-fill" style="width:47.2%"></div>
+                            </div><span class="bar-value">406</span>
+                        </div>
+                        <div class="bar-row"><span class="bar-label">McLaren</span>
+                            <div class="bar-track">
+                                <div class="bar-fill" style="width:35.1%"></div>
+                            </div><span class="bar-value">302</span>
+                        </div>
+                        <div class="bar-row"><span class="bar-label">Aston Martin</span>
+                            <div class="bar-track">
+                                <div class="bar-fill" style="width:32.6%"></div>
+                            </div><span class="bar-value">280</span>
+                        </div>
+                        <div class="bar-row"><span class="bar-label">Alpine</span>
+                            <div class="bar-track">
+                                <div class="bar-fill" style="width:14.0%"></div>
+                            </div><span class="bar-value">120</span>
+                        </div>
+                        <div class="bar-row"><span class="bar-label">Williams</span>
+                            <div class="bar-track">
+                                <div class="bar-fill" style="width:3.3%"></div>
+                            </div><span class="bar-value">28</span>
+                        </div>
+                        <div class="bar-row"><span class="bar-label">AlphaTauri</span>
+                            <div class="bar-track">
+                                <div class="bar-fill" style="width:2.9%"></div>
+                            </div><span class="bar-value">25</span>
+                        </div>
+                        <div class="bar-row"><span class="bar-label">Alfa Romeo</span>
+                            <div class="bar-track">
+                                <div class="bar-fill" style="width:1.9%"></div>
+                            </div><span class="bar-value">16</span>
+                        </div>
+                        <div class="bar-row"><span class="bar-label">Haas</span>
+                            <div class="bar-track">
+                                <div class="bar-fill" style="width:1.4%"></div>
+                            </div><span class="bar-value">12</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="accordion" class="section">
+            <h2 class="section-title"><span data-i18n="acc.title">Cómo</span> <span class="text-gradient"
+                    data-i18n="acc.titleaccent">Funciona</span></h2>
+            <div class="accordion-container">
+                <div class="accordion-item glass">
+                    <button class="accordion-header" aria-expanded="false">
+                        <span data-i18n="acc.engine">Motor Honda RBPT</span>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <polyline points="6 9 12 15 18 9" />
+                        </svg>
+                    </button>
+                    <div class="accordion-body">
+                        <p data-i18n="acc.enginebody">El V6 turbo híbrido produce más de 1,050 hp con una eficiencia
+                            térmica del 52%. Desarrollado por Honda en colaboración con Red Bull Powertrains, combina un
+                            MGU-K de 120 kW con un MGU-H que recupera energía del turbo.</p>
+                    </div>
+                </div>
+                <div class="accordion-item glass">
+                    <button class="accordion-header" aria-expanded="false">
+                        <span data-i18n="acc.aero">Aerodinámica de efecto suelo</span>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <polyline points="6 9 12 15 18 9" />
+                        </svg>
+                    </button>
+                    <div class="accordion-body">
+                        <p data-i18n="acc.aerobody">El RB19 utiliza túneles de efecto suelo que generan carga
+                            aerodinámica sin necesidad de alerones complejos. Diseñado por Adrian Newey, el flujo de
+                            aire se acelera bajo el monoplaza creando un vacío que lo succiona al asfalto.</p>
+                    </div>
+                </div>
+                <div class="accordion-item glass">
+                    <button class="accordion-header" aria-expanded="false">
+                        <span data-i18n="acc.drs">Sistema DRS</span>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <polyline points="6 9 12 15 18 9" />
+                        </svg>
+                    </button>
+                    <div class="accordion-body">
+                        <p data-i18n="acc.drsbody">El Drag Reduction System abre el alerón trasero en rectas para
+                            reducir la resistencia aerodinámica. El RB19 alcanzaba velocidades punta de 352 km/h con DRS
+                            activado, siendo el más rápido en 16 de 22 circuitos.</p>
+                    </div>
+                </div>
+                <div class="accordion-item glass">
+                    <button class="accordion-header" aria-expanded="false">
+                        <span data-i18n="acc.tires">Gestión de neumáticos</span>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <polyline points="6 9 12 15 18 9" />
+                        </svg>
+                    </button>
+                    <div class="accordion-body">
+                        <p data-i18n="acc.tiresbody">El RB19 destacó por su excepcional gestión de neumáticos Pirelli de
+                            18". La carga aerodinámica equilibrada permitía ventanas de parada más amplias y una
+                            degradación hasta 40% menor que la competencia.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="specs" class="section">
+            <div class="specs-content">
+                <h2 class="section-title"><span data-i18n="specs.title">Especificaciones</span> <span
+                        class="text-gradient" data-i18n="specs.titleaccent">Técnicas</span></h2>
+                <div class="specs-grid">
+                    <div class="spec-item glass"><span class="spec-label" data-i18n="specs.engine">Motor</span><span
+                            class="spec-value">Honda RBPT</span><span class="spec-detail"
+                            data-i18n="specs.enginedesc">V6 Turbo híbrido</span></div>
+                    <div class="spec-item glass"><span class="spec-label" data-i18n="specs.power">Potencia</span><span
+                            class="spec-value">1,050+ hp</span><span class="spec-detail">15,000 RPM</span></div>
+                    <div class="spec-item glass"><span class="spec-label" data-i18n="specs.weight">Peso</span><span
+                            class="spec-value">798 kg</span><span class="spec-detail"
+                            data-i18n="specs.weightdesc">Incluyendo piloto</span></div>
+                    <div class="spec-item glass"><span class="spec-label" data-i18n="specs.speed">Velocidad
+                            máxima</span><span class="spec-value">352 km/h</span><span class="spec-detail"
+                            data-i18n="specs.speeddesc">Monoplaza 2023</span></div>
+                    <div class="spec-item glass"><span class="spec-label"
+                            data-i18n="specs.aero">Aerodinámica</span><span class="spec-value"
+                            data-i18n="specs.aeroval">Efecto suelo</span><span class="spec-detail"
+                            data-i18n="specs.aerodesc">Diseño Newey</span></div>
+                    <div class="spec-item glass"><span class="spec-label" data-i18n="specs.tires">Neumáticos</span>
+                        <span class="spec-value">Pirelli</span><span class="spec-detail">18 pulgadas</span></div>
+                </div>
+            </div>
+        </section>
+
+        <footer class="page-footer">
+            <hr class="footer-divider">
+            <div class="footer-inner">
+                <a href="#contact" class="btn-contact" data-i18n="footer.contact">CONTACT</a>
+                <div class="footer-center">
+                    <span class="visit-counter"><span data-i18n="visit.label">Visitas: </span><span
+                            id="visitCount"></span></span>
+                    <a href="#" class="wallpaper-link" id="wallpaperDownload" data-i18n="footer.wallpaper">Descargar
+                        wallpaper</a>
+                </div>
+                <p class="description-text" data-i18n="footer.credit">RB19 — Diseñado por Mayobb. Impulsado por la
+                    excelencia.</p>
+            </div>
+        </footer>
+
+    </main>
+
+    <noscript>
+        <div
+            style="position:fixed;inset:0;z-index:99999;background:#000;color:#fff;display:flex;align-items:center;justify-content:center;font-family:sans-serif;font-size:1.2rem;padding:20px;text-align:center;">
+            This page requires JavaScript to function properly.</div>
+    </noscript>
+
+    <div class="cursor-glow"></div>
+    <div class="scanlines" aria-hidden="true"></div>
+    <div class="scroll-progress"></div>
+
+    <button class="back-to-top" id="backToTop" aria-label="Volver arriba" data-i18n-aria="backtop">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <polyline points="18 15 12 9 6 15" />
+        </svg>
+    </button>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.12.2/lottie.min.js"></script>
+    <script type="module" src="https://cdn.jsdelivr.net/npm/@google/model-viewer/dist/model-viewer.min.js"></script>
+    <script src="assets/js/script.js"></script>
+    <script>if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => { });</script>
+</body>
+
+</html>
