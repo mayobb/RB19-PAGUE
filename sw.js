@@ -1,14 +1,9 @@
-const CACHE = 'rb19-v1';
+const CACHE = 'rb19-v2';
 const ASSETS = [
     '/',
     'index.html',
     'assets/css/style.css',
     'assets/js/script.js',
-    'assets/audio/Bad Bunny - MONACO (Instrumental).mp3',
-    'assets/videos/onboard.mp4',
-    'assets/videos/video-bg.mp4',
-    'assets/animacion_loading.json',
-    'assets/models/rb19/oracle_redbull_rb19.glb',
     'assets/images/drivers/max.webp',
     'assets/images/drivers/perez.jpg',
     'assets/images/gallery/frente2.jpg',

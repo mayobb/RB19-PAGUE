@@ -7,11 +7,11 @@
     <title data-i18n="page.title">RB19 — Cinematic Experience</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <!-- Preload recursos críticos -->
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" as="style">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏎️</text></svg>">
     <link rel="preload" href="assets/css/style.css" as="style">
-    <link rel="preload" href="assets/js/script.js" as="script">
-    <link rel="preload" href="assets/videos/video-bg.mp4" as="video" type="video/mp4">
     <link rel="stylesheet" href="assets/css/style.css">
 </head>
 
@@ -20,7 +20,9 @@
     <a href="#main-content" class="skip-link">Skip to content</a>
 
     <div id="loading-overlay">
-        <div id="loading-lottie"></div>
+        <div id="loading-lottie">
+            <div class="loading-spinner"></div>
+        </div>
     </div>
 
     <nav id="navbar">
@@ -64,6 +66,11 @@
                 <line x1="16" y1="2" x2="16" y2="6" />
                 <line x1="8" y1="2" x2="8" y2="6" />
                 <line x1="3" y1="10" x2="21" y2="10" />
+            </svg>
+        </button>
+        <button class="toolbar-btn" id="nightModeToggle" aria-label="Las Vegas Night Mode">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
             </svg>
         </button>
     </div>
@@ -191,7 +198,7 @@
                         min-camera-orbit="auto 20deg 2m"
                         max-camera-orbit="auto 80deg 8m"
                         environment-image="neutral"
-                        loading="eager" reveal="auto"
+                        loading="lazy" reveal="auto"
                         class="rb19-model"></model-viewer>
                 </div>
                 <div class="model-text">
@@ -828,6 +835,7 @@
             </div>
         </section>
 
+        
         <footer class="page-footer">
             <hr class="footer-divider">
             <div class="footer-inner">
@@ -861,10 +869,9 @@
         </svg>
     </button>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.12.2/lottie.min.js"></script>
-    <script type="module" src="https://cdn.jsdelivr.net/npm/@google/model-viewer/dist/model-viewer.min.js"></script>
-    <script src="assets/js/script.js"></script>
-    <script>if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => { });</script>
+    <script type="module" src="https://cdn.jsdelivr.net/npm/@google/model-viewer@3.5.0/dist/model-viewer.min.js"></script>
+    <script defer src="assets/js/script.js"></script>
+    <script defer>if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => { });</script>
 </body>
 
 </html>

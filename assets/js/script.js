@@ -1,44 +1,53 @@
-if (typeof lottie !== 'undefined') {
-    lottie.loadAnimation({
-        container: document.getElementById('loading-lottie'),
-        renderer: 'svg',
-        loop: true,
-        autoplay: true,
-        path: '../animacion_loading.json'
-    });
+function tryHideOverlay() {
+    var overlay = document.getElementById('loading-overlay');
+    if (overlay) overlay.classList.add('hidden');
 }
 
+
 window.addEventListener("load", () => {
-    setTimeout(() => {
-        document.getElementById('loading-overlay').classList.add('hidden');
-        if (translations[currentLang]['page.title']) {
+    setTimeout(tryHideOverlay, 5000);
+    try {
+        if (translations[currentLang] && translations[currentLang]['page.title']) {
             document.title = translations[currentLang]['page.title'];
         }
-        initScrollReveal();
-        initCounters();
-        initNavScroll();
-        initCursorGlow();
-        initScrollProgress();
-        initBackToTop();
-        initCardTilt();
-        initRain();
-        initSound();
-        initLangToggle();
-        initCountdown();
-        initRaceModal();
-        initTimelineScroll();
-        initLightbox();
-        initParallax();
-        initTimelineParticles();
-        initSectionTransitions();
-        initRivalToggle();
-        initAccordion();
-        initTimelineAutoPlay();
-        initRaceWeekendMode();
-        initVideoModal();
-        initWallpaperDownload();
-        initVisitCounter();
-    }, 1500);
+    } catch(e) { console.warn('Title update failed:', e); }
+
+    const initFuncs = [
+        ['initScrollReveal', initScrollReveal],
+        ['initCounters', initCounters],
+        ['initNavScroll', initNavScroll],
+        ['initCursorGlow', initCursorGlow],
+        ['initScrollProgress', initScrollProgress],
+        ['initBackToTop', function() { initBackToTop(); }],
+        ['initCardTilt', initCardTilt],
+        ['initRain', initRain],
+        ['initSound', initSound],
+        ['initLangToggle', initLangToggle],
+        ['initCountdown', initCountdown],
+        ['initRaceModal', initRaceModal],
+        ['initTimelineScroll', initTimelineScroll],
+        ['initLightbox', initLightbox],
+        ['initParallax', initParallax],
+        ['initTimelineParticles', initTimelineParticles],
+        ['initSectionTransitions', initSectionTransitions],
+        ['initRivalToggle', initRivalToggle],
+        ['initAccordion', initAccordion],
+        ['initTimelineAutoPlay', initTimelineAutoPlay],
+        ['initRaceWeekendMode', initRaceWeekendMode],
+        ['initVideoModal', initVideoModal],
+        ['initWallpaperDownload', initWallpaperDownload],
+        ['initVisitCounter', initVisitCounter],
+        ['initNightMode', initNightMode],
+
+    ];
+
+    initFuncs.forEach(([name, fn]) => {
+        try {
+            fn();
+        } catch(e) {
+            console.error(`Error loading component ${name}:`, e);
+        }
+    });
 });
 
 function initScrollReveal() {
@@ -197,6 +206,7 @@ function initRain() {
     const ctx = canvas.getContext('2d');
     let W, H;
     let animFrameId = null;
+    let paused = false;
 
     function resize() {
         W = canvas.width = window.innerWidth;
@@ -208,7 +218,7 @@ function initRain() {
         window._rainResizeTimer = setTimeout(resize, 150);
     }, { passive: true });
 
-    const count = 60; // reducido de 80
+    const count = 60;
     const drops = Array.from({ length: count }, () => ({
         x: Math.random() * (window.innerWidth || 1920),
         y: Math.random() * (window.innerHeight || 1080),
@@ -218,9 +228,9 @@ function initRain() {
     }));
 
     function draw() {
+        if (paused) { animFrameId = requestAnimationFrame(draw); return; }
         ctx.clearRect(0, 0, W, H);
         ctx.lineWidth = 1;
-        // Agrupar por opacidad para reducir cambios de estado
         drops.forEach(d => {
             ctx.globalAlpha = d.opacity;
             ctx.strokeStyle = 'rgba(255,255,255,0.18)';
@@ -235,6 +245,14 @@ function initRain() {
         animFrameId = requestAnimationFrame(draw);
     }
     draw();
+
+    const obs = new IntersectionObserver(function(entries) {
+        paused = !entries[0].isIntersecting;
+    }, { threshold: 0 });
+    obs.observe(canvas);
+    document.addEventListener('visibilitychange', function() {
+        paused = document.hidden;
+    });
 }
 
 let engineAudio = null;
@@ -242,11 +260,10 @@ let engineAudio = null;
 function initSound() {
     const btn = document.getElementById('soundToggle');
     if (!btn) return;
-    engineAudio = new Audio('../audio/Bad Bunny - MONACO (Instrumental).mp3');
+    engineAudio = new Audio(encodeURI('assets/audio/Bad Bunny - MONACO (Instrumental).mp3'));
     engineAudio.loop = true;
     engineAudio.volume = 0;
     let playing = false;
-    let retries = 0;
 
     function fadeIn() {
         let vol = 0;
@@ -266,20 +283,18 @@ function initSound() {
             playing = true;
             btn.classList.add('sound-active');
             fadeIn();
-        }).catch(() => {
-            if (retries < 10) {
-                retries++;
-                setTimeout(startAudio, 500);
-            }
-        });
+        }).catch(function(){});
     }
 
-    startAudio();
+    function firstInteraction() {
+        if (playing) return;
+        startAudio();
+    }
 
-    document.addEventListener('click', () => { if (!playing) startAudio(); }, { once: true });
-    document.addEventListener('touchstart', () => { if (!playing) startAudio(); }, { once: true });
+    document.addEventListener('click', firstInteraction, { once: true });
+    document.addEventListener('touchstart', firstInteraction, { once: true });
 
-    btn.addEventListener('click', () => {
+    btn.addEventListener('click', function() {
         if (playing) {
             engineAudio.pause();
             playing = false;
@@ -289,9 +304,9 @@ function initSound() {
         }
     });
 
-    engineAudio.addEventListener('pause', () => {
+    engineAudio.addEventListener('pause', function() {
         if (playing) {
-            engineAudio.play().catch(() => {});
+            engineAudio.play().catch(function(){});
         }
     });
 }
@@ -300,7 +315,7 @@ const translations = {
     es: {
         'page.title': 'RB19 — Experiencia Cinematográfica',
         'nav.home': 'Inicio', 'nav.stats': 'Datos', 'nav.model': 'Modelo 3D',
-        'nav.trophies': 'Trofeos', 'nav.drivers': 'Pilotos', 'nav.timeline': 'Temporada', 'nav.compare': 'Comparativa',
+        'nav.trophies': 'Trofeos', 'nav.drivers': 'Pilotos', 'nav.timeline': 'Temporada',  'nav.compare': 'Comparativa',
         'hero.subtitle': 'El monoplaza más dominante en la historia de la Fórmula 1',
         'hero.wins': 'Victorias', 'hero.points': 'Campeonato', 'hero.lap': 'Vuelta récord',
         'scroll': 'Desplázate',
@@ -349,12 +364,13 @@ const translations = {
         'footer.wallpaper': 'Descargar wallpaper',
         'visit.label': 'Visitas: ',
         'hero.video': 'Ver onboard',
-        'weekend.title': 'Horario fin de carrera'
+        'weekend.title': 'Horario fin de carrera',
+
     },
     en: {
         'page.title': 'RB19 — Cinematic Experience',
         'nav.home': 'Home', 'nav.stats': 'Stats', 'nav.model': '3D Model',
-        'nav.trophies': 'Trophies', 'nav.drivers': 'Drivers', 'nav.timeline': 'Season', 'nav.compare': 'Compare',
+        'nav.trophies': 'Trophies', 'nav.drivers': 'Drivers', 'nav.timeline': 'Season',  'nav.compare': 'Compare',
         'hero.subtitle': 'The most dominant car in Formula 1 history',
         'hero.wins': 'Wins', 'hero.points': 'Championship', 'hero.lap': 'Fastest lap',
         'scroll': 'Scroll',
@@ -403,7 +419,8 @@ const translations = {
         'footer.wallpaper': 'Download wallpaper',
         'visit.label': 'Visits: ',
         'hero.video': 'Watch onboard',
-        'weekend.title': 'Race weekend schedule'
+        'weekend.title': 'Race weekend schedule',
+
     }
 };
 
@@ -466,6 +483,7 @@ function initLangToggle() {
                 }
             }
         }
+
     });
 }
 
@@ -929,5 +947,18 @@ function initVisitCounter() {
     localStorage.setItem('rb19_visits', visits.toString());
     el.textContent = visits;
 }
+
+function initNightMode() {
+    var btn = document.getElementById('nightModeToggle');
+    if (!btn) return;
+    btn.addEventListener('click', function() {
+        document.body.classList.toggle('night-mode');
+        btn.classList.toggle('active');
+    });
+}
+
+
+
+
 
 
